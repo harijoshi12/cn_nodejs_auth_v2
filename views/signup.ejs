@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="https://www.google.com/recaptcha/api.js?render=<%= recaptchaSiteKey %>"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Sign Up</h1>
+      <form id="signup-form" action="/api/v1/signup" method="POST">
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required />
+        <input
+          type="hidden"
+          id="g-recaptcha-response"
+          name="g-recaptcha-response" />
+        <button type="submit">Sign Up</button>
+      </form>
+      <p>Already have an account? <a href="/auth/signin">Sign In</a></p>
+      <div class="google-btn" id="google-signin-btn">
+        <div class="google-icon-wrapper">
+          <div class="google-icon"></div>
+        </div>
+        <p class="btn-text"><b>Sign up with Google</b></p>
+      </div>
+      <script nonce="<%= nonce %>">
+        grecaptcha.ready(function () {
+          document
+            .getElementById("signup-form")
+            .addEventListener("submit", function (event) {
+              event.preventDefault();
+              grecaptcha
+                .execute("<%= recaptchaSiteKey %>", { action: "signup" })
+                .then(function (token) {
+                  document.getElementById("g-recaptcha-response").value = token;
+                  document.getElementById("signup-form").submit();
+                });
+            });
+        });
+      </script>
+      <script src="/js/main.js"></script>
+    </div>
+  </body>
+</html>
