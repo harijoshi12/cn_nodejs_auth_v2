@@ -12,11 +12,11 @@ import crypto from "crypto";
 dotenv.config();
 
 // Import configurations and routes
-import connectDB from "./config/database.js";
 import "./config/passport-setup.js";
 import apiRoutes from "./routes/api.js";
 import pageRoutes from "./routes/pages.js";
 import { globalErrorHandler } from "./middlewares/errorHandler.js";
+import { AppError } from "./utils/AppError.js";
 
 const app = express();
 
@@ -83,6 +83,11 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => res.redirect("/auth/signin"));
 app.use("/api/v1", apiRoutes);
 app.use("/auth", pageRoutes);
+
+// Handle undefined routes
+app.all("*", (req, res, next) => {
+  next(new AppError(`Cannot find ${req.originalUrl} on this server!`, 404));
+});
 
 // Error handling middleware
 app.use(globalErrorHandler);

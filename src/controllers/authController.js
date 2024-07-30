@@ -23,6 +23,7 @@ export const signUp = async (req, res) => {
     "g-recaptcha-response": recaptchaToken,
   } = req.body;
 
+  console.log("recaptchaToken", recaptchaToken);
   // Verify reCAPTCHA
   if (!recaptchaToken) {
     return res.status(400).send("reCAPTCHA token is missing");
@@ -71,6 +72,11 @@ export const signIn = async (req, res) => {
   if (!user) {
     throw new NotFoundError("User not found");
   }
+
+  // Debugging statements
+  console.log("User found:", user);
+  console.log("Password provided:", password);
+  console.log("User's stored password:", user.password);
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {

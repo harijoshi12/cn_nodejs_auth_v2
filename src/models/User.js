@@ -27,6 +27,9 @@ userSchema.pre("save", async function (next) {
 
 // Method to compare password for login
 userSchema.methods.comparePassword = async function (candidatePassword) {
+  if (!this.password) {
+    throw new Error("Password is not set for this user.");
+  }
   return bcrypt.compare(candidatePassword, this.password);
 };
 
