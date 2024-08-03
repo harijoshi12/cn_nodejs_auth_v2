@@ -1,4 +1,5 @@
 /**
+ * src/utils/responseHandler.js
  * Sends a success response
  * @param {Object} res - Express response object
  * @param {number} statusCode - HTTP status code

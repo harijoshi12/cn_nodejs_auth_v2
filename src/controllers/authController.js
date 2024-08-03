@@ -10,6 +10,7 @@ import {
   InternalServerError,
 } from "../utils/AppError.js";
 import { verifyRecaptcha } from "../services/recaptchaService.js";
+import { responseHandler } from "../utils/responseHandler.js";
 import crypto from "crypto";
 
 /**
@@ -23,19 +24,18 @@ export const signUp = async (req, res) => {
     "g-recaptcha-response": recaptchaToken,
   } = req.body;
 
-  console.log("recaptchaToken", recaptchaToken);
   // Verify reCAPTCHA
   if (!recaptchaToken) {
-    return res.status(400).send("reCAPTCHA token is missing");
+    return responseHandler.badRequest(res, "reCAPTCHA token is missing");
   }
   const recaptchaVerified = await verifyRecaptcha(recaptchaToken, "signup");
   if (!recaptchaVerified) {
-    throw new BadRequestError("reCAPTCHA verification failed");
+    return responseHandler.badRequest(res, "reCAPTCHA verification failed");
   }
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw new BadRequestError("Email already in use");
+    return responseHandler.badRequest(res, "Email already in use");
   }
 
   const user = new User({ email, password, name });
@@ -50,7 +50,7 @@ export const signUp = async (req, res) => {
     secure: process.env.NODE_ENV === "production",
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
-  res.status(201).json({ message: "User created successfully" });
+  responseHandler.created(res, "User created successfully");
 };
 
 /**
@@ -61,26 +61,21 @@ export const signIn = async (req, res) => {
 
   // Verify reCAPTCHA
   if (!recaptchaToken) {
-    return res.status(400).send("reCAPTCHA token is missing");
+    return responseHandler.badRequest(res, "reCAPTCHA token is missing");
   }
   const recaptchaVerified = await verifyRecaptcha(recaptchaToken, "signin");
   if (!recaptchaVerified) {
-    throw new BadRequestError("reCAPTCHA verification failed");
+    return responseHandler.badRequest(res, "reCAPTCHA verification failed");
   }
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw new NotFoundError("User not found");
+    return responseHandler.notFound(res, "User not found");
   }
-
-  // Debugging statements
-  console.log("User found:", user);
-  console.log("Password provided:", password);
-  console.log("User's stored password:", user.password);
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
-    throw new BadRequestError("Incorrect password");
+    return responseHandler.badRequest(res, "Incorrect password");
   }
 
   const token = generateToken(user);
@@ -89,7 +84,7 @@ export const signIn = async (req, res) => {
     secure: process.env.NODE_ENV === "production",
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
-  res.json({ message: "Signed in successfully" });
+  responseHandler.ok(res, "Signed in successfully");
 };
 
 /**
@@ -97,7 +92,7 @@ export const signIn = async (req, res) => {
  */
 export const signOut = (req, res) => {
   res.clearCookie("token");
-  res.json({ message: "Signed out successfully" });
+  responseHandler.ok(res, "Signed out successfully");
 };
 
 /**
@@ -109,13 +104,13 @@ export const resetPassword = async (req, res) => {
 
   const isMatch = await user.comparePassword(oldPassword);
   if (!isMatch) {
-    throw new BadRequestError("Incorrect old password");
+    return responseHandler.badRequest(res, "Incorrect old password");
   }
 
   user.password = newPassword;
   await user.save();
 
-  res.json({ message: "Password reset successfully" });
+  responseHandler.ok(res, "Password reset successfully");
 };
 
 /**
@@ -126,7 +121,7 @@ export const forgotPassword = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new NotFoundError("No user found with this email");
+    return responseHandler.notFound(res, "No user found with this email");
   }
 
   const resetToken = crypto.randomBytes(20).toString("hex");
@@ -137,13 +132,14 @@ export const forgotPassword = async (req, res) => {
   try {
     // Send password reset email asynchronously
     sendPasswordResetEmail(user, resetToken).catch(console.error);
-    res.json({ message: "Password reset email sent" });
+    responseHandler.ok(res, "Password reset email sent");
   } catch (error) {
     console.error("Failed to send password reset email:", error);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
-    throw new InternalServerError(
+    return responseHandler.serverError(
+      res,
       "Failed to send password reset email. Please try again later."
     );
   }
@@ -161,7 +157,10 @@ export const resetPasswordWithToken = async (req, res) => {
   });
 
   if (!user) {
-    throw new BadRequestError("Password reset token is invalid or has expired");
+    return responseHandler.badRequest(
+      res,
+      "Password reset token is invalid or has expired"
+    );
   }
 
   user.password = newPassword;
@@ -169,7 +168,7 @@ export const resetPasswordWithToken = async (req, res) => {
   user.resetPasswordExpires = undefined;
   await user.save();
 
-  res.json({ message: "Password has been reset successfully" });
+  responseHandler.ok(res, "Password has been reset successfully");
 };
 
 /**

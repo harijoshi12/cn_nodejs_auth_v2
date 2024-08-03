@@ -1,3 +1,4 @@
+// src/middlewares/errorHandler.js
 import { AppError } from "../utils/AppError.js";
 import { responseHandler } from "../utils/responseHandler.js";
 

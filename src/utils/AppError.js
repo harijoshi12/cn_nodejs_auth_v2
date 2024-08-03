@@ -1,4 +1,5 @@
 /**
+ * src/utils/AppError.js
  * Custom application error class
  * @extends Error
  */

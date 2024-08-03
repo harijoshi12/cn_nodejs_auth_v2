@@ -1,3 +1,4 @@
+// src/app.js
 import express from "express";
 import passport from "passport";
 import helmet from "helmet";
@@ -33,6 +34,7 @@ const generateNonce = () => {
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use(helmet());
 
 // Helmet configuration with CSP
 // app.use(
