@@ -74,10 +74,10 @@ npm run dev
 | Method | Endpoint                      | Description               |
 | ------ | ----------------------------- | ------------------------- |
 | POST   | /api/v1/signup                | Register a new user       |
-| GET    | /api/v1/signin                | Log in a user             |
-| DELETE | /api/v1/signout               | Log out a user            |
+| POST   | /api/v1/signin                | Log in a user             |
+| POST   | /api/v1/signout               | Log out a user            |
 | POST   | /api/v1/reset-password        | Reset user password       |
-| DELETE | /api/v1/forgot-password       | Send password reset email |
+| POST   | /api/v1/forgot-password       | Send password reset email |
 | POST   | /api/v1/reset-password/:token | Reset password with token |
 
 ## Project Structure
