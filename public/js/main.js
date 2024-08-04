@@ -3,9 +3,10 @@ function handleSubmit(event, url) {
   const formData = new FormData(event.target);
   const data = Object.fromEntries(formData);
 
-  if (window.grecaptcha) {
-    data.recaptchaToken = grecaptcha.getResponse();
-  }
+  // Commented out reCAPTCHA verification
+  // if (window.grecaptcha) {
+  //   data.recaptchaToken = grecaptcha.getResponse();
+  // }
 
   fetch(url, {
     method: "POST",
@@ -14,18 +15,26 @@ function handleSubmit(event, url) {
     },
     body: JSON.stringify(data),
   })
-    .then((response) => response.json())
+    .then(async (response) => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "An error occurred");
+      }
+      return data;
+    })
     .then((data) => {
-      if (data.message) {
-        alert(data.message);
-        if (url.includes("signin") || url.includes("signup")) {
-          window.location.href = "/auth/home";
-        }
+      alert(data.message);
+      if (url.includes("signin")) {
+        window.location.href = "/auth/home";
+      } else if (url.includes("signup")) {
+        window.location.href = "/auth/signin";
+      } else if (url.includes("reset-password")) {
+        window.location.href = "/auth/signin";
       }
     })
     .catch((error) => {
-      console.error("Error:", error);
-      alert("An error occurred. Please try again.");
+      console.error("Error:", error.message);
+      alert(error.message);
     });
 }
 
@@ -66,7 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Passwords do not match");
         return;
       }
-      handleSubmit(e, "/api/v1/reset-password");
+      const token = window.location.pathname.split("/").pop();
+      handleSubmit(e, `/api/v1/reset-password/${token}`);
     });
   }
 

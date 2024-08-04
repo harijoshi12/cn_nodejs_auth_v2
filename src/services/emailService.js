@@ -63,7 +63,7 @@ export const sendWelcomeEmail = async (user) => {
 export const sendPasswordResetEmail = async (user, resetToken) => {
   const { email, name } = user;
   const subject = "Password Reset Request";
-  const resetUrl = `http://yourapp.com/reset-password/${resetToken}`;
+  const resetUrl = `http://localhost:5000/auth/reset-password/${resetToken}`;
   const text = `Hello ${name},\n\nYou requested a password reset. Please click the link below to reset your password:\n\n${resetUrl}`;
   const html = `<h1>Password Reset Request</h1><p>Hello ${name},</p><p>You requested a password reset. Please click the link below to reset your password:</p><a href="${resetUrl}">${resetUrl}</a>`;
 

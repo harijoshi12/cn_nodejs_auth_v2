@@ -11,17 +11,24 @@ body {
 }
 
 .container {
-  max-width: 500px;
+  max-width: 600px;
   width: 100%;
   background: #fff;
-  padding: 20px;
+  padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 h1 {
   color: #333;
+  margin-bottom: 20px;
+}
+
+.welcome-message {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
 }
 
 form {
@@ -39,7 +46,8 @@ input[type="password"] {
   box-sizing: border-box;
 }
 
-button {
+button,
+.btn {
   display: block;
   width: 100%;
   padding: 10px;
@@ -49,9 +57,12 @@ button {
   border-radius: 5px;
   cursor: pointer;
   margin-top: 10px;
+  text-align: center;
+  transition: background 0.3s;
 }
 
-button:hover {
+button:hover,
+.btn:hover {
   background: #555;
 }
 

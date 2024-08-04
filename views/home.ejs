@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body>
-    <h1>Welcome to Your App</h1>
-    <p>Hello, <%= user.name %>!</p>
-    <button id="signout-btn">Sign Out</button>
-    <button id="reset-password-btn">Reset Password</button>
+    <div class="container">
+      <h1>Welcome to Your App</h1>
+      <p class="welcome-message">Hello, <%= user.name %>!</p>
+      <button id="signout-btn" class="btn">Sign Out</button>
+      <button id="reset-password-btn" class="btn">Reset Password</button>
+    </div>
     <script src="/js/main.js"></script>
   </body>
 </html>

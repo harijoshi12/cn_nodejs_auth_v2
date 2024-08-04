@@ -4,12 +4,6 @@ import {
   sendPasswordResetEmail,
 } from "../services/emailService.js";
 import { generateToken, verifyToken } from "../services/jwtService.js";
-import {
-  BadRequestError,
-  NotFoundError,
-  InternalServerError,
-} from "../utils/AppError.js";
-import { verifyRecaptcha } from "../services/recaptchaService.js";
 import { responseHandler } from "../utils/responseHandler.js";
 import crypto from "crypto";
 
@@ -17,21 +11,17 @@ import crypto from "crypto";
  * Handle user sign up
  */
 export const signUp = async (req, res) => {
-  const {
-    email,
-    password,
-    name,
-    "g-recaptcha-response": recaptchaToken,
-  } = req.body;
+  const { email, password, name } = req.body;
 
-  // Verify reCAPTCHA
-  if (!recaptchaToken) {
-    return responseHandler.badRequest(res, "reCAPTCHA token is missing");
-  }
-  const recaptchaVerified = await verifyRecaptcha(recaptchaToken, "signup");
-  if (!recaptchaVerified) {
-    return responseHandler.badRequest(res, "reCAPTCHA verification failed");
-  }
+  // Commented out reCAPTCHA verification
+  // const { "g-recaptcha-response": recaptchaToken } = req.body;
+  // if (!recaptchaToken) {
+  //   return responseHandler.badRequest(res, "reCAPTCHA token is missing");
+  // }
+  // const recaptchaVerified = await verifyRecaptcha(recaptchaToken, "signup");
+  // if (!recaptchaVerified) {
+  //   return responseHandler.badRequest(res, "reCAPTCHA verification failed");
+  // }
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -57,16 +47,17 @@ export const signUp = async (req, res) => {
  * Handle user sign in
  */
 export const signIn = async (req, res) => {
-  const { email, password, "g-recaptcha-response": recaptchaToken } = req.body;
+  const { email, password } = req.body;
 
-  // Verify reCAPTCHA
-  if (!recaptchaToken) {
-    return responseHandler.badRequest(res, "reCAPTCHA token is missing");
-  }
-  const recaptchaVerified = await verifyRecaptcha(recaptchaToken, "signin");
-  if (!recaptchaVerified) {
-    return responseHandler.badRequest(res, "reCAPTCHA verification failed");
-  }
+  // Commented out reCAPTCHA verification
+  // const { "g-recaptcha-response": recaptchaToken } = req.body;
+  // if (!recaptchaToken) {
+  //   return responseHandler.badRequest(res, "reCAPTCHA token is missing");
+  // }
+  // const recaptchaVerified = await verifyRecaptcha(recaptchaToken, "signin");
+  // if (!recaptchaVerified) {
+  //   return responseHandler.badRequest(res, "reCAPTCHA verification failed");
+  // }
 
   const user = await User.findOne({ email });
   if (!user) {
@@ -149,7 +140,8 @@ export const forgotPassword = async (req, res) => {
  * Handle password reset with token
  */
 export const resetPasswordWithToken = async (req, res) => {
-  const { token, newPassword } = req.body;
+  const { newPassword } = req.body;
+  const { token } = req.params;
 
   const user = await User.findOne({
     resetPasswordToken: token,

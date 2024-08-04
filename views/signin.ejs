@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign In</title>
     <link rel="stylesheet" href="/css/styles.css" />
-    <script src="https://www.google.com/recaptcha/api.js?render=<%= recaptchaSiteKey %>"></script>
+    <!-- <script src="https://www.google.com/recaptcha/api.js?render=<%= recaptchaSiteKey %>"></script> -->
   </head>
   <body>
     <div class="container">
@@ -31,7 +31,7 @@
         </div>
         <p class="btn-text"><b>Sign in with Google</b></p>
       </div>
-      <script nonce="<%= nonce %>">
+      <!-- <script nonce="<%= nonce %>">
         grecaptcha.ready(function () {
           document
             .getElementById("signin-form")
@@ -45,7 +45,7 @@
                 });
             });
         });
-      </script>
+      </script> -->
       <script src="/js/main.js"></script>
     </div>
   </body>

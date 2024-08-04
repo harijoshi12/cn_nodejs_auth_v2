@@ -30,7 +30,15 @@ router.get("/home", authenticate, (req, res) =>
   res.render("home", { title: "Home", user: req.user })
 );
 router.get("/reset-password", authenticate, (req, res) =>
-  res.render("reset", { title: "Reset Password" })
+  res.render("reset", { title: "Reset Password", user: req.user })
+);
+
+// Route to handle reset password link
+router.get("/reset-password/:token", (req, res) =>
+  res.render("reset-password", {
+    title: "Reset Password",
+    token: req.params.token,
+  })
 );
 
 // Google authentication routes
